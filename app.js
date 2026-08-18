@@ -1,159 +1,23 @@
 "use strict";
-let map;
-let dailyQuestions=[];
-let current=0;
-let totalScore=0;
-let selectedLatLng=null;
-let guessMarker=null;
-let answerMarker=null;
-let answerLine=null;
-let roundScores=[];
-
+let map,dailyQuestions=[],current=0,totalScore=0,selectedLatLng=null;
+let guessMarker=null,answerMarker=null,answerLine=null,roundScores=[];
 const $=id=>document.getElementById(id);
-
-function hashString(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
-function mulberry32(seed){return function(){let t=seed+=0x6D2B79F5;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};}
-function shuffle(array,rng){const a=[...array];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function localDateKey(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");}
-function chooseDaily(all,dateKey){
-  const rng=mulberry32(hashString("GeoBible-"+dateKey));
-  function choose(category,count){
-    const records=all.filter(q=>q.category===category);
-    const keys=shuffle([...new Set(records.map(q=>q.key))],rng).slice(0,count);
-    return keys.map(key=>{const choices=records.filter(q=>q.key===key);return choices[Math.floor(rng()*choices.length)];});
-  }
-  return shuffle([...choose("bible",4),...choose("history",3)],rng);
-}
-function radians(value){return value*Math.PI/180;}
-function distanceMiles(a,b){const R=3958.8;const dLat=radians(b.lat-a.lat),dLng=radians(b.lng-a.lng);const x=Math.sin(dLat/2)**2+Math.cos(radians(a.lat))*Math.cos(radians(b.lat))*Math.sin(dLng/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
-function scoreForDistance(miles){return Math.max(0,Math.round(5000*Math.exp(-miles/450)));}
-function removeResultLayers(){[guessMarker,answerMarker,answerLine].forEach(layer=>{if(layer&&map.hasLayer(layer))map.removeLayer(layer);});guessMarker=answerMarker=answerLine=null;selectedLatLng=null;}
-function showQuestion(){
-  removeResultLayers();
-  const q=dailyQuestions[current];
-  $("progress").textContent=`Question ${current+1} of 7`;
-  $("score").textContent=`Score: ${totalScore.toLocaleString()}`;
-  $("category").textContent=q.category==="bible"?"Bible geography":"Protestant history";
-  $("question").textContent=q.question;
-  $("instruction").textContent="Click the map to place your guess, then submit it.";
-  $("result").hidden=true;
-  $("submitButton").hidden=false;
-  $("submitButton").disabled=true;
-  $("nextButton").hidden=true;
-  map.setView(q.category==="bible"?[32,35]:[38,-10],q.category==="bible"?5:2,{animate:false});
-}
-function selectGuess(event){
-  selectedLatLng=event.latlng;
-  if(guessMarker)guessMarker.setLatLng(selectedLatLng);else guessMarker=L.circleMarker(selectedLatLng,{radius:8,color:"#0b5ed7",weight:3,fillColor:"#6ea8fe",fillOpacity:.8}).addTo(map);
-  $("submitButton").disabled=false;
-}
-function submitGuess(){
-  if(!selectedLatLng)return;
-  const q=dailyQuestions[current];
-  const answer={lat:q.lat,lng:q.lng};
-  const miles=distanceMiles(selectedLatLng,answer);
-  const points=scoreForDistance(miles);
-  totalScore+=points;roundScores.push(points);
-  answerMarker=L.circleMarker(answer,{radius:9,color:"#8a4b08",weight:3,fillColor:"#f2b84b",fillOpacity:.9}).addTo(map).bindPopup(`<strong>${q.answer}</strong>`).openPopup();
-  answerLine=L.polyline([selectedLatLng,answer],{color:"#b14435",weight:3,dashArray:"7 7"}).addTo(map);
-  map.fitBounds(L.latLngBounds([selectedLatLng,answer]).pad(.25),{maxZoom:8});
-  $("result").innerHTML=`<strong>${q.answer}</strong><br>${q.category==="bible"?"Scripture":"Figure / topic"}: ${q.reference}<br>${q.note}<br><strong>${Math.round(miles).toLocaleString()} miles away · ${points.toLocaleString()} points</strong>`;
-  $("result").hidden=false;
-  $("score").textContent=`Score: ${totalScore.toLocaleString()}`;
-  $("submitButton").hidden=true;
-  $("nextButton").hidden=false;
-  $("nextButton").textContent=current===dailyQuestions.length-1?"See final score":"Next question";
-  map.off("click",selectGuess);
-}
-function nextQuestion(){
-  current++;
-  if(current>=dailyQuestions.length){finishGame();return;}
-  map.on("click",selectGuess);showQuestion();
-}
-function finishGame(){
-  removeResultLayers();
-  $("progress").textContent="Complete";
-  $("question").textContent=`Final score: ${totalScore.toLocaleString()} / 35,000`;
-  $("instruction").textContent="Come back tomorrow for seven new questions.";
-  $("category").textContent="Daily complete";
-  $("result").hidden=true;$("nextButton").hidden=true;$("submitButton").hidden=true;$("shareButton").hidden=false;
-  localStorage.setItem("geobible-"+localDateKey(),JSON.stringify({score:totalScore,roundScores}));
-}
-async function shareResults(){
-  const blocks=roundScores
-    .map(score=>score>=4000?"🟩":score>=2500?"🟨":score>=1000?"🟧":"🟥")
-    .join("");
-
-  // Remove query strings and hash fragments, while preserving the GitHub Pages path.
-  const siteUrl=`${window.location.origin}${window.location.pathname}`;
-
-  // Keep the URL inside the text instead of sending it as a separate Web Share URL.
-  // Some share targets display only the separate URL and omit the score text.
-  const shareText=[
-    `GeoBible ${localDateKey()}`,
-    blocks,
-    `${totalScore.toLocaleString()} / 35,000`,
-    "",
-    "Play today's GeoBible:",
-    siteUrl
-  ].join("\n");
-
-  try{
-    if(navigator.share){
-      await navigator.share({
-        title:"GeoBible Daily",
-        text:shareText
-      });
-    }else if(navigator.clipboard&&window.isSecureContext){
-      await navigator.clipboard.writeText(shareText);
-      alert("Results and game link copied to your clipboard.");
-    }else{
-      const textArea=document.createElement("textarea");
-      textArea.value=shareText;
-      textArea.setAttribute("readonly","");
-      textArea.style.position="fixed";
-      textArea.style.opacity="0";
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
-      alert("Results and game link copied to your clipboard.");
-    }
-  }catch(error){
-    if(error.name!=="AbortError"){
-      console.error("Sharing failed:",error);
-      try{
-        await navigator.clipboard.writeText(shareText);
-        alert("Results and game link copied to your clipboard.");
-      }catch(copyError){
-        window.prompt("Copy your results and link:",shareText);
-      }
-    }
-  }
-}
-async function init(){
-  try{
-    if(typeof L==="undefined")throw new Error("Leaflet did not load. Check whether a browser extension or network filter is blocking cdn.jsdelivr.net.");
-    map=L.map("map",{worldCopyJump:true,minZoom:2}).setView([32,20],3);
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{subdomains:"abcd",maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
-    const response=await fetch("questions.json",{cache:"no-store"});
-    if(!response.ok)throw new Error(`questions.json returned HTTP ${response.status}. Make sure it is in the repository root.`);
-    const all=await response.json();
-    if(!Array.isArray(all)||all.length<7)throw new Error("questions.json is missing or invalid.");
-    const dateKey=localDateKey();
-    $("dateLabel").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-    dailyQuestions=chooseDaily(all,dateKey);
-    map.on("click",selectGuess);
-    showQuestion();
-  }catch(error){
-    console.error(error);
-    $("error").textContent="The game could not load: "+error.message;
-    $("error").hidden=false;
-    $("question").textContent="GeoBible needs attention";
-    $("progress").textContent="Load error";
-  }
-}
-$("submitButton").addEventListener("click",submitGuess);
-$("nextButton").addEventListener("click",nextQuestion);
-$("shareButton").addEventListener("click",shareResults);
-window.addEventListener("DOMContentLoaded",init);
+function hashString(t){let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function mulberry32(s){return function(){let t=s+=0x6D2B79F5;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
+function shuffle(a,r){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function localDateKey(){const d=new Date();return[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")}
+function chooseDaily(all,date){const rng=mulberry32(hashString("GeoBible-"+date));function choose(cat,n){const rows=all.filter(q=>q.category===cat),keys=shuffle([...new Set(rows.map(q=>q.key))],rng).slice(0,n);return keys.map(k=>{const a=rows.filter(q=>q.key===k);return a[Math.floor(rng()*a.length)]})}return shuffle([...choose("bible",4),...choose("history",3)],rng)}
+function radians(v){return v*Math.PI/180}
+function distanceMiles(a,b){const R=3958.8,dLat=radians(b.lat-a.lat),dLng=radians(b.lng-a.lng),x=Math.sin(dLat/2)**2+Math.cos(radians(a.lat))*Math.cos(radians(b.lat))*Math.sin(dLng/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+function scoreForDistance(m){return Math.max(0,Math.round(5000*Math.exp(-m/450)))}
+function blocksFor(scores){return scores.map(s=>s>=4000?"🟩":s>=2500?"🟨":s>=1000?"🟧":"🟥").join("")}
+function removeLayers(){[guessMarker,answerMarker,answerLine].forEach(l=>{if(l&&map.hasLayer(l))map.removeLayer(l)});guessMarker=answerMarker=answerLine=null;selectedLatLng=null}
+function showQuestion(){removeLayers();const q=dailyQuestions[current];$("progress").textContent=`Question ${current+1} of 7`;$("score").textContent=`Score: ${totalScore.toLocaleString()}`;$("category").textContent=q.category==="bible"?"Bible geography":"Protestant history";$("question").textContent=q.question;$("instruction").textContent="Click the map to place your guess, then submit it.";$("result").hidden=true;$("submitButton").hidden=false;$("submitButton").disabled=true;$("nextButton").hidden=true;$("shareButton").hidden=true;map.setView(q.category==="bible"?[32,35]:[38,-10],q.category==="bible"?5:2,{animate:false})}
+function selectGuess(e){selectedLatLng=e.latlng;if(guessMarker)guessMarker.setLatLng(selectedLatLng);else guessMarker=L.circleMarker(selectedLatLng,{radius:8,color:"#0b5ed7",weight:3,fillColor:"#6ea8fe",fillOpacity:.8}).addTo(map);$("submitButton").disabled=false}
+function submitGuess(){if(!selectedLatLng)return;const q=dailyQuestions[current],answer={lat:q.lat,lng:q.lng},miles=distanceMiles(selectedLatLng,answer),points=scoreForDistance(miles);totalScore+=points;roundScores.push(points);answerMarker=L.circleMarker(answer,{radius:9,color:"#8a4b08",weight:3,fillColor:"#f2b84b",fillOpacity:.9}).addTo(map).bindPopup(`<strong>${q.answer}</strong>`).openPopup();answerLine=L.polyline([selectedLatLng,answer],{color:"#b14435",weight:3,dashArray:"7 7"}).addTo(map);map.fitBounds(L.latLngBounds([selectedLatLng,answer]).pad(.25),{maxZoom:8});$("result").innerHTML=`<strong>${q.answer}</strong><br>${q.category==="bible"?"Scripture":"Figure / topic"}: ${q.reference}<br>${q.note||""}<br><strong>${Math.round(miles).toLocaleString()} miles away · ${points.toLocaleString()} points</strong>`;$("result").hidden=false;$("score").textContent=`Score: ${totalScore.toLocaleString()}`;$("submitButton").hidden=true;$("nextButton").hidden=false;$("nextButton").textContent=current===6?"See final score":"Next question";map.off("click",selectGuess)}
+function nextQuestion(){current++;if(current>=7){finishGame();return}map.on("click",selectGuess);showQuestion()}
+function showCompletedGame(saved){current=7;totalScore=Number(saved.score)||0;roundScores=Array.isArray(saved.roundScores)?saved.roundScores:[];removeLayers();map.off("click",selectGuess);$("progress").textContent="Complete";$("score").textContent=`Score: ${totalScore.toLocaleString()}`;$("category").textContent="Daily complete";$("question").textContent=`Today's score: ${totalScore.toLocaleString()} / 35,000`;$("instruction").textContent="You already completed today's GeoBible. Come back tomorrow for seven new questions.";$("result").innerHTML=`<strong>Your saved result</strong><br><span style="font-size:1.5rem;letter-spacing:.12rem">${blocksFor(roundScores)}</span><br>${totalScore.toLocaleString()} / 35,000`;$("result").hidden=false;$("submitButton").hidden=true;$("nextButton").hidden=true;$("shareButton").hidden=false}
+function finishGame(){const saved={date:localDateKey(),score:totalScore,roundScores:[...roundScores],completedAt:new Date().toISOString()};localStorage.setItem("geobible-"+localDateKey(),JSON.stringify(saved));showCompletedGame(saved)}
+async function shareResults(){const siteUrl=`${window.location.origin}${window.location.pathname}`,text=[`GeoBible ${localDateKey()}`,blocksFor(roundScores),`${totalScore.toLocaleString()} / 35,000`,"","Play today's GeoBible:",siteUrl].join("\n");try{if(navigator.share)await navigator.share({title:"GeoBible Daily",text});else{await navigator.clipboard.writeText(text);alert("Results and game link copied to your clipboard.")}}catch(e){if(e.name!=="AbortError"){try{await navigator.clipboard.writeText(text);alert("Results and game link copied to your clipboard.")}catch(_){window.prompt("Copy your results and link:",text)}}}}
+async function init(){try{if(typeof L==="undefined")throw new Error("Leaflet did not load.");map=L.map("map",{worldCopyJump:true,minZoom:2}).setView([32,20],3);L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{subdomains:"abcd",maxZoom:19,attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}).addTo(map);const response=await fetch("questions.json",{cache:"no-store"});if(!response.ok)throw new Error(`questions.json returned HTTP ${response.status}.`);const all=await response.json();if(!Array.isArray(all)||all.length<7)throw new Error("questions.json is invalid.");const date=localDateKey();$("dateLabel").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});dailyQuestions=chooseDaily(all,date);const stored=localStorage.getItem("geobible-"+date);if(stored){try{const saved=JSON.parse(stored);if(saved&&saved.date===date&&Number.isFinite(Number(saved.score))){showCompletedGame(saved);return}}catch(e){localStorage.removeItem("geobible-"+date)}}map.on("click",selectGuess);showQuestion()}catch(e){console.error(e);$("error").textContent="The game could not load: "+e.message;$("error").hidden=false;$("question").textContent="GeoBible needs attention";$("progress").textContent="Load error"}}
+$("submitButton").addEventListener("click",submitGuess);$("nextButton").addEventListener("click",nextQuestion);$("shareButton").addEventListener("click",shareResults);window.addEventListener("DOMContentLoaded",init);
