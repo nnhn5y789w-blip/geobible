@@ -79,10 +79,40 @@ function finishGame(){
   $("result").hidden=true;$("nextButton").hidden=true;$("submitButton").hidden=true;$("shareButton").hidden=false;
   localStorage.setItem("geobible-"+localDateKey(),JSON.stringify({score:totalScore,roundScores}));
 }
-async function shareResults(){
-  const blocks=roundScores.map(s=>s>=4000?"🟩":s>=2500?"🟨":s>=1000?"🟧":"🟥").join("");
-  const text=`GeoBible ${localDateKey()}\n${blocks}\n${totalScore.toLocaleString()} / 35,000`;
-  try{if(navigator.share)await navigator.share({title:"GeoBible Daily",text});else{await navigator.clipboard.writeText(text);alert("Results copied to your clipboard.");}}catch(error){console.log(error);}
+async function shareResults() {
+  const blocks = roundScores
+    .map(score =>
+      score >= 4000 ? "🟩" :
+      score >= 2500 ? "🟨" :
+      score >= 1000 ? "🟧" : "🟥"
+    )
+    .join("");
+
+  const siteUrl =
+    window.location.origin + window.location.pathname;
+
+  const text =
+`GeoBible ${localDateKey()}
+${blocks}
+${totalScore.toLocaleString()} / 35,000
+
+Play today's GeoBible:
+${siteUrl}`;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: "GeoBible Daily",
+        text: text,
+        url: siteUrl
+      });
+    } else {
+      await navigator.clipboard.writeText(text);
+      alert("Results and game link copied to your clipboard.");
+    }
+  } catch (error) {
+    console.log("Sharing was canceled or unavailable:", error);
+  }
 }
 async function init(){
   try{
