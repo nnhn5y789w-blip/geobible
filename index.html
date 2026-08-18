@@ -1,1 +1,35 @@
-<!doctype html><html><head><meta charset="utf-8"><title>GeoBible Daily</title><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"><link rel="stylesheet" href="style.css"></head><body><div id="header"><h1>GeoBible Daily</h1><div id="question"></div><div id="meta"></div><div id="score"></div></div><div id="map"></div><script src="https://unpkg.com/leaflet/dist/leaflet.js"></script><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GeoBible Daily</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><h1>GeoBible Daily</h1><p id="dateLabel" class="muted"></p></div>
+    <div class="stats"><span id="progress">Loading...</span><span id="score">Score: 0</span></div>
+  </header>
+  <main>
+    <section class="card">
+      <span id="category" class="pill"></span>
+      <h2 id="question">Loading today's questions...</h2>
+      <p id="instruction" class="muted">Click the map to place your guess, then submit it.</p>
+      <div class="actions">
+        <button id="submitButton" disabled>Submit guess</button>
+        <button id="nextButton" class="secondary" hidden>Next question</button>
+        <button id="shareButton" class="secondary" hidden>Share results</button>
+      </div>
+      <div id="result" class="result" hidden></div>
+      <div id="error" class="error" hidden></div>
+    </section>
+    <div id="map" aria-label="Interactive world map"></div>
+  </main>
+  <footer>Map data © OpenStreetMap contributors, tiles © CARTO. Built for personal Bible and church-history study.</footer>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
