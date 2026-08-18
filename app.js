@@ -79,39 +79,56 @@ function finishGame(){
   $("result").hidden=true;$("nextButton").hidden=true;$("submitButton").hidden=true;$("shareButton").hidden=false;
   localStorage.setItem("geobible-"+localDateKey(),JSON.stringify({score:totalScore,roundScores}));
 }
-async function shareResults() {
-  const blocks = roundScores
-    .map(score =>
-      score >= 4000 ? "🟩" :
-      score >= 2500 ? "🟨" :
-      score >= 1000 ? "🟧" : "🟥"
-    )
+async function shareResults(){
+  const blocks=roundScores
+    .map(score=>score>=4000?"🟩":score>=2500?"🟨":score>=1000?"🟧":"🟥")
     .join("");
 
-  const siteUrl =
-    window.location.origin + window.location.pathname;
+  // Remove query strings and hash fragments, while preserving the GitHub Pages path.
+  const siteUrl=`${window.location.origin}${window.location.pathname}`;
 
-  const text =
-`GeoBible ${localDateKey()}
-${blocks}
-${totalScore.toLocaleString()} / 35,000
+  // Keep the URL inside the text instead of sending it as a separate Web Share URL.
+  // Some share targets display only the separate URL and omit the score text.
+  const shareText=[
+    `GeoBible ${localDateKey()}`,
+    blocks,
+    `${totalScore.toLocaleString()} / 35,000`,
+    "",
+    "Play today's GeoBible:",
+    siteUrl
+  ].join("\n");
 
-Play today's GeoBible:
-${siteUrl}`;
-
-  try {
-    if (navigator.share) {
+  try{
+    if(navigator.share){
       await navigator.share({
-        title: "GeoBible Daily",
-        text: text,
-        url: siteUrl
+        title:"GeoBible Daily",
+        text:shareText
       });
-    } else {
-      await navigator.clipboard.writeText(text);
+    }else if(navigator.clipboard&&window.isSecureContext){
+      await navigator.clipboard.writeText(shareText);
+      alert("Results and game link copied to your clipboard.");
+    }else{
+      const textArea=document.createElement("textarea");
+      textArea.value=shareText;
+      textArea.setAttribute("readonly","");
+      textArea.style.position="fixed";
+      textArea.style.opacity="0";
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
       alert("Results and game link copied to your clipboard.");
     }
-  } catch (error) {
-    console.log("Sharing was canceled or unavailable:", error);
+  }catch(error){
+    if(error.name!=="AbortError"){
+      console.error("Sharing failed:",error);
+      try{
+        await navigator.clipboard.writeText(shareText);
+        alert("Results and game link copied to your clipboard.");
+      }catch(copyError){
+        window.prompt("Copy your results and link:",shareText);
+      }
+    }
   }
 }
 async function init(){
