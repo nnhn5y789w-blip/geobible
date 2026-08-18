@@ -1,7 +1,426 @@
 [
- {"question":"Where was Jesus born?","answer":"Bethlehem","lat":31.7054,"lng":35.2024},
- {"question":"Where was Jesus baptized?","answer":"Jordan River","lat":31.8370,"lng":35.5500},
- {"question":"Where was Saul converted?","answer":"Damascus","lat":33.5138,"lng":36.2765},
- {"question":"Where did David fight Goliath?","answer":"Valley of Elah","lat":31.7000,"lng":34.9500},
- {"question":"Where was Abraham called from?","answer":"Ur","lat":30.9625,"lng":46.1030}
+  {
+    "category": "bible",
+    "question": "Where was Jesus born?",
+    "answer": "Bethlehem",
+    "reference": "Matthew 2:1",
+    "lat": 31.7054,
+    "lng": 35.2024
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus baptized?",
+    "answer": "Jordan River",
+    "reference": "Matthew 3:13-17",
+    "lat": 31.837,
+    "lng": 35.55
+  },
+  {
+    "category": "bible",
+    "question": "Where was Saul converted?",
+    "answer": "Damascus",
+    "reference": "Acts 9:3-6",
+    "lat": 33.5138,
+    "lng": 36.2765
+  },
+  {
+    "category": "bible",
+    "question": "Where did David defeat Goliath?",
+    "answer": "Valley of Elah",
+    "reference": "1 Samuel 17",
+    "lat": 31.7,
+    "lng": 34.95
+  },
+  {
+    "category": "bible",
+    "question": "Where was Abraham called from?",
+    "answer": "Ur",
+    "reference": "Genesis 12:1",
+    "lat": 30.9625,
+    "lng": 46.103
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus crucified?",
+    "answer": "Jerusalem",
+    "reference": "John 19",
+    "lat": 31.7683,
+    "lng": 35.2137
+  },
+  {
+    "category": "bible",
+    "question": "Where did Jonah travel from?",
+    "answer": "Joppa",
+    "reference": "Jonah 1:3",
+    "lat": 32.05,
+    "lng": 34.75
+  },
+  {
+    "category": "bible",
+    "question": "Where did Paul preach to the Athenians?",
+    "answer": "Athens",
+    "reference": "Acts 17",
+    "lat": 37.9838,
+    "lng": 23.7275
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus born?",
+    "answer": "Bethlehem",
+    "reference": "Matthew 2:1",
+    "lat": 31.7054,
+    "lng": 35.2024
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus baptized?",
+    "answer": "Jordan River",
+    "reference": "Matthew 3:13-17",
+    "lat": 31.837,
+    "lng": 35.55
+  },
+  {
+    "category": "bible",
+    "question": "Where was Saul converted?",
+    "answer": "Damascus",
+    "reference": "Acts 9:3-6",
+    "lat": 33.5138,
+    "lng": 36.2765
+  },
+  {
+    "category": "bible",
+    "question": "Where did David defeat Goliath?",
+    "answer": "Valley of Elah",
+    "reference": "1 Samuel 17",
+    "lat": 31.7,
+    "lng": 34.95
+  },
+  {
+    "category": "bible",
+    "question": "Where was Abraham called from?",
+    "answer": "Ur",
+    "reference": "Genesis 12:1",
+    "lat": 30.9625,
+    "lng": 46.103
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus crucified?",
+    "answer": "Jerusalem",
+    "reference": "John 19",
+    "lat": 31.7683,
+    "lng": 35.2137
+  },
+  {
+    "category": "bible",
+    "question": "Where did Jonah travel from?",
+    "answer": "Joppa",
+    "reference": "Jonah 1:3",
+    "lat": 32.05,
+    "lng": 34.75
+  },
+  {
+    "category": "bible",
+    "question": "Where did Paul preach to the Athenians?",
+    "answer": "Athens",
+    "reference": "Acts 17",
+    "lat": 37.9838,
+    "lng": 23.7275
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus born?",
+    "answer": "Bethlehem",
+    "reference": "Matthew 2:1",
+    "lat": 31.7054,
+    "lng": 35.2024
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus baptized?",
+    "answer": "Jordan River",
+    "reference": "Matthew 3:13-17",
+    "lat": 31.837,
+    "lng": 35.55
+  },
+  {
+    "category": "bible",
+    "question": "Where was Saul converted?",
+    "answer": "Damascus",
+    "reference": "Acts 9:3-6",
+    "lat": 33.5138,
+    "lng": 36.2765
+  },
+  {
+    "category": "bible",
+    "question": "Where did David defeat Goliath?",
+    "answer": "Valley of Elah",
+    "reference": "1 Samuel 17",
+    "lat": 31.7,
+    "lng": 34.95
+  },
+  {
+    "category": "bible",
+    "question": "Where was Abraham called from?",
+    "answer": "Ur",
+    "reference": "Genesis 12:1",
+    "lat": 30.9625,
+    "lng": 46.103
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus crucified?",
+    "answer": "Jerusalem",
+    "reference": "John 19",
+    "lat": 31.7683,
+    "lng": 35.2137
+  },
+  {
+    "category": "bible",
+    "question": "Where did Jonah travel from?",
+    "answer": "Joppa",
+    "reference": "Jonah 1:3",
+    "lat": 32.05,
+    "lng": 34.75
+  },
+  {
+    "category": "bible",
+    "question": "Where did Paul preach to the Athenians?",
+    "answer": "Athens",
+    "reference": "Acts 17",
+    "lat": 37.9838,
+    "lng": 23.7275
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus born?",
+    "answer": "Bethlehem",
+    "reference": "Matthew 2:1",
+    "lat": 31.7054,
+    "lng": 35.2024
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus baptized?",
+    "answer": "Jordan River",
+    "reference": "Matthew 3:13-17",
+    "lat": 31.837,
+    "lng": 35.55
+  },
+  {
+    "category": "bible",
+    "question": "Where was Saul converted?",
+    "answer": "Damascus",
+    "reference": "Acts 9:3-6",
+    "lat": 33.5138,
+    "lng": 36.2765
+  },
+  {
+    "category": "bible",
+    "question": "Where did David defeat Goliath?",
+    "answer": "Valley of Elah",
+    "reference": "1 Samuel 17",
+    "lat": 31.7,
+    "lng": 34.95
+  },
+  {
+    "category": "bible",
+    "question": "Where was Abraham called from?",
+    "answer": "Ur",
+    "reference": "Genesis 12:1",
+    "lat": 30.9625,
+    "lng": 46.103
+  },
+  {
+    "category": "bible",
+    "question": "Where was Jesus crucified?",
+    "answer": "Jerusalem",
+    "reference": "John 19",
+    "lat": 31.7683,
+    "lng": 35.2137
+  },
+  {
+    "category": "bible",
+    "question": "Where did Jonah travel from?",
+    "answer": "Joppa",
+    "reference": "Jonah 1:3",
+    "lat": 32.05,
+    "lng": 34.75
+  },
+  {
+    "category": "bible",
+    "question": "Where did Paul preach to the Athenians?",
+    "answer": "Athens",
+    "reference": "Acts 17",
+    "lat": 37.9838,
+    "lng": 23.7275
+  },
+  {
+    "category": "history",
+    "question": "Where did John Calvin minister?",
+    "answer": "Geneva",
+    "reference": "Reformed History",
+    "lat": 46.2044,
+    "lng": 6.1432
+  },
+  {
+    "category": "history",
+    "question": "Where was Martin Luther born?",
+    "answer": "Eisleben",
+    "reference": "Reformation",
+    "lat": 51.527,
+    "lng": 11.548
+  },
+  {
+    "category": "history",
+    "question": "Where did Charles Spurgeon pastor?",
+    "answer": "London",
+    "reference": "Baptist History",
+    "lat": 51.5072,
+    "lng": -0.1276
+  },
+  {
+    "category": "history",
+    "question": "Where was Tim Keller known for ministry?",
+    "answer": "New York City",
+    "reference": "Modern Ministry",
+    "lat": 40.7128,
+    "lng": -74.006
+  },
+  {
+    "category": "history",
+    "question": "Where is Southern Seminary?",
+    "answer": "Louisville",
+    "reference": "Baptist Seminary",
+    "lat": 38.2527,
+    "lng": -85.7585
+  },
+  {
+    "category": "history",
+    "question": "Where is Ligonier Ministries headquartered?",
+    "answer": "Sanford Florida",
+    "reference": "Reformed Ministry",
+    "lat": 28.8029,
+    "lng": -81.2695
+  },
+  {
+    "category": "history",
+    "question": "Where was Jonathan Edwards born?",
+    "answer": "East Windsor Connecticut",
+    "reference": "Colonial America",
+    "lat": 41.9123,
+    "lng": -72.611
+  },
+  {
+    "category": "history",
+    "question": "Where did John Calvin minister?",
+    "answer": "Geneva",
+    "reference": "Reformed History",
+    "lat": 46.2044,
+    "lng": 6.1432
+  },
+  {
+    "category": "history",
+    "question": "Where was Martin Luther born?",
+    "answer": "Eisleben",
+    "reference": "Reformation",
+    "lat": 51.527,
+    "lng": 11.548
+  },
+  {
+    "category": "history",
+    "question": "Where did Charles Spurgeon pastor?",
+    "answer": "London",
+    "reference": "Baptist History",
+    "lat": 51.5072,
+    "lng": -0.1276
+  },
+  {
+    "category": "history",
+    "question": "Where was Tim Keller known for ministry?",
+    "answer": "New York City",
+    "reference": "Modern Ministry",
+    "lat": 40.7128,
+    "lng": -74.006
+  },
+  {
+    "category": "history",
+    "question": "Where is Southern Seminary?",
+    "answer": "Louisville",
+    "reference": "Baptist Seminary",
+    "lat": 38.2527,
+    "lng": -85.7585
+  },
+  {
+    "category": "history",
+    "question": "Where is Ligonier Ministries headquartered?",
+    "answer": "Sanford Florida",
+    "reference": "Reformed Ministry",
+    "lat": 28.8029,
+    "lng": -81.2695
+  },
+  {
+    "category": "history",
+    "question": "Where was Jonathan Edwards born?",
+    "answer": "East Windsor Connecticut",
+    "reference": "Colonial America",
+    "lat": 41.9123,
+    "lng": -72.611
+  },
+  {
+    "category": "history",
+    "question": "Where did John Calvin minister?",
+    "answer": "Geneva",
+    "reference": "Reformed History",
+    "lat": 46.2044,
+    "lng": 6.1432
+  },
+  {
+    "category": "history",
+    "question": "Where was Martin Luther born?",
+    "answer": "Eisleben",
+    "reference": "Reformation",
+    "lat": 51.527,
+    "lng": 11.548
+  },
+  {
+    "category": "history",
+    "question": "Where did Charles Spurgeon pastor?",
+    "answer": "London",
+    "reference": "Baptist History",
+    "lat": 51.5072,
+    "lng": -0.1276
+  },
+  {
+    "category": "history",
+    "question": "Where was Tim Keller known for ministry?",
+    "answer": "New York City",
+    "reference": "Modern Ministry",
+    "lat": 40.7128,
+    "lng": -74.006
+  },
+  {
+    "category": "history",
+    "question": "Where is Southern Seminary?",
+    "answer": "Louisville",
+    "reference": "Baptist Seminary",
+    "lat": 38.2527,
+    "lng": -85.7585
+  },
+  {
+    "category": "history",
+    "question": "Where is Ligonier Ministries headquartered?",
+    "answer": "Sanford Florida",
+    "reference": "Reformed Ministry",
+    "lat": 28.8029,
+    "lng": -81.2695
+  },
+  {
+    "category": "history",
+    "question": "Where was Jonathan Edwards born?",
+    "answer": "East Windsor Connecticut",
+    "reference": "Colonial America",
+    "lat": 41.9123,
+    "lng": -72.611
+  }
 ]
